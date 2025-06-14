@@ -124,18 +124,18 @@ export default function SchedaSaAl() {
               <p>{forme[forma].bonus}</p>
               <div>
                 <p>HP:</p>
-                <Progress value={(hp / 2200) * 100} className="w-full" />
+                <Progress value={(hp / 1250) * 100} className="w-full" />
                 <p>{hp} / 2200</p>
               </div>
               <div>
                 <p>Focus:</p>
-                <Progress value={(focus / 10) * 100} className="w-full" />
+                <Progress value={(focus / 14) * 100} className="w-full" />
                 <p>{focus} / 10</p>
               </div>
               <div>
                 <h3 className="font-medium">Armi Disponibili:</h3>
                 <ul className="list-disc list-inside">
-                  {armiAuree.map((arma) => (
+                  {armiAuree.map((arma: string) => (
                     <li key={arma}>{arma}</li>
                   ))}
                 </ul>
