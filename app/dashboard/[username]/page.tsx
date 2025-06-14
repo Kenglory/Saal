@@ -3,16 +3,22 @@
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+interface User {
+  username: string;
+  password: string;
+  characterName: string;
+}
+
 export default function PlayerDashboard() {
   const { username } = useParams();
-  const [character, setCharacter] = useState<any>(null);
+  const [character, setCharacter] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetch('/api/users');
-      const users = await res.json();
-      const user = users.find((u: any) => u.username === username);
-      setCharacter(user);
+      const users: User[] = await res.json();
+      const user = users.find((u) => u.username === username);
+      setCharacter(user ?? null);
     };
     fetchData();
   }, [username]);

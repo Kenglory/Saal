@@ -3,6 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+interface User {
+  username: string;
+  password: string;
+  characterName: string;
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState('');
@@ -10,25 +16,24 @@ export default function LoginPage() {
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-  // Controllo input vuoto
-  if (!username || !password) {
-    setError('Inserisci nome utente e password!');
-    return;
-  }
+    if (!username || !password) {
+      setError('Inserisci nome utente e password!');
+      return;
+    }
 
-  const res = await fetch('/api/users');
-  const users = await res.json();
+    const res = await fetch('/api/users');
+    const users: User[] = await res.json();
 
-  const user = users.find(
-    (u: any) => u.username === username && u.password === password
-  );
+    const user = users.find(
+      (u: User) => u.username === username && u.password === password
+    );
 
-  if (user) {
-    router.push('/dashboard/${user.username}');
-  } else {
-    setError('Nome utente o password errati!');
-  }
-};
+    if (user) {
+      router.push('/dashboard/${user.username}');
+    } else {
+      setError('Nome utente o password errati!');
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen p-6">
