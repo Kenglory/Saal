@@ -10,19 +10,25 @@ export default function LoginPage() {
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    const res = await fetch('/api/users');
-    const users = await res.json();
+  // Controllo input vuoto
+  if (!username || !password) {
+    setError('Inserisci nome utente e password!');
+    return;
+  }
 
-    const user = users.find(
-      (u: any) => u.username === username && u.password === password
-    );
+  const res = await fetch('/api/users');
+  const users = await res.json();
 
-    if (user) {
-      router.push(`/dashboard/${user.username}`);
-    } else {
-      setError('Nome utente o password errati!');
-    }
-  };
+  const user = users.find(
+    (u: any) => u.username === username && u.password === password
+  );
+
+  if (user) {
+    router.push('/dashboard/${user.username}');
+  } else {
+    setError('Nome utente o password errati!');
+  }
+};
 
   return (
     <div className="flex flex-col items-center justify-center h-screen p-6">
