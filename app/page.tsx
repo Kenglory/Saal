@@ -56,7 +56,7 @@ export default function SchedaSaAl() {
 
   return (
     <div className="p-6 space-y-4">
-      <h1 className="text-3xl font-bold">Scheda di Sa'Al</h1>
+      <h1 className="text-3xl font-bold">Scheda di Sa&apos;Al</h1>
       <Tabs defaultValue="base">
         <TabsList>
           <TabsTrigger value="base" onClick={() => setForma("base")}>Base</TabsTrigger>
