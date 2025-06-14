@@ -1,0 +1,10 @@
+[
+  { "username": "davide", "password": "1234", "characterName": "Joseph" },
+  { "username": "stefano", "password": "1234", "characterName": "Hydra" },
+  { "username": "oliver", "password": "1234", "characterName": "Mono" },
+  { "username": "matteo", "password": "1234", "characterName": "Crudol" },
+  { "username": "jacopo", "password": "1234", "characterName": "Njord" },
+  { "username": "samuele", "password": "8888", "characterName": "Sa'Al" },
+  { "username": "master", "password": "admin", "characterName": "Master" }
+
+]
