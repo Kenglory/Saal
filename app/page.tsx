@@ -8,26 +8,25 @@ import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function SchedaSaAl() {
-  const [forma, setForma] = useState("base");
-  const [hp, setHp] = useState(2000);
-  const [focus, setFocus] = useState(10);
+  const [forma, setForma] = useState<"base" | "aurea">("base");
+  const [hp, setHp] = useState(1250);
+  const [focus, setFocus] = useState(14);
   const [equip, setEquip] = useState({
     arma: "Zweihänder Aurea",
     armatura: "Tunica Strappata",
     stivali: "Passi del Silenzio",
   });
 
-  const forme = {
-    base: {
-      nome: "Forma Base",
-      bonus: "Nessun potenziamento attivo",
-    },
-    aurea: {
-      nome: "Forma Aurea",
-      bonus:
-        "+200 HP, volo, accesso alle 10 armi auree, interazione con strutture auree, potenziale 500+ danni",
-    },
-  };
+  const forme: Record<"base" | "aurea", { nome: string; bonus: string }> = {
+  base: {
+    nome: "Forma Base",
+    bonus: "Nessun potenziamento attivo",
+  },
+  aurea: {
+    nome: "Forma Aurea",
+    bonus: "+200 HP, volo, accesso alle 10 armi auree, interazione con strutture auree, potenziale 500+ danni",
+  },
+};
 
   const armiAuree = [
     "Cannone Aureo",
