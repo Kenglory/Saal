@@ -31,7 +31,11 @@ export default function HomePage() {
     router.push('/login');
   };
 
-  if (loading) return null; // evita flashing durante il load
+  const handleLogin = () => {
+    router.push('/login');
+  };
+
+  if (loading) return null;
 
   return (
     <div className="flex flex-col items-center justify-center h-screen p-4">
@@ -57,7 +61,7 @@ export default function HomePage() {
         </div>
       ) : (
         <button
-          onClick={() => router.push('/login')}
+          onClick={handleLogin}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
         >
           Accedi
