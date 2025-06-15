@@ -22,7 +22,7 @@ try {
   } else {
     setError('Nome utente o password errati!');
   }
-} catch (err) {
+} catch {
   setError('Errore durante il login. Riprova.');
 }
 
