@@ -35,7 +35,6 @@ export default function HomePage() {
     router.push('/login');
   };
 
-  const handleGoToSheet = () => {
     const handleGoToSheet = () => {
   if (user?.username === 'samuele') {
     router.push('/dashboard/samuele');
@@ -82,4 +81,4 @@ export default function HomePage() {
   );
 }
   
-}
+
