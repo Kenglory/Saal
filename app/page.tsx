@@ -17,56 +17,63 @@ export default function HomePage() {
   useEffect(() => {
     const stored = localStorage.getItem('user');
     if (stored) {
-      const parsed: User = JSON.parse(stored);
+      const parsed = JSON.parse(stored);
       setUser(parsed);
-      console.log('👤 Utente loggato:', parsed.characterName);
+      console.log('✅ Utente loggato:', parsed.characterName);
     } else {
-      console.log('🕵 Nessun utente trovato nel localStorage');
+      console.log('⚠️ Nessun utente trovato nel localStorage');
     }
     setLoading(false);
   }, []);
+
+  const handleLogin = () => {
+    router.push('/login');
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     router.push('/login');
   };
 
-  const handleLogin = () => {
-    router.push('/login');
+  const handleGoToSheet = () => {
+    if (user && user.username) {
+      router.push(`/dashboard/${user.username}`);
+    }
   };
 
-  if (loading) return null;
-  
-  const handleGoToSheet = () => {
-  if (user && user.username) {
-    router.push(`/dashboard/${user.username}`);
-  }
-};
+  if (loading) return <p className="p-8 text-lg">Caricamento in corso...</p>;
 
-  return (
-  <div className="flex flex-col items-center justify-center h-screen space-y-4">
-    {user && (
-      <>
-        <h1 className="text-3xl font-bold">Benvenuto, {user.characterName}!</h1>
-        <button onClick={handleGoToSheet} className="bg-blue-600 text-white px-4 py-2 rounded">
-          Vai alla tua scheda
-        </button>
-        <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded">
-          Logout
-        </button>
-      </>
-    )}
-  </div>
-);
-       
-      (
+  if (!user) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen text-center space-y-4">
+        <p className="text-xl text-red-500">Nessun utente trovato. Effettua il login per continuare.</p>
         <button
           onClick={handleLogin}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
+          className="px-4 py-2 bg-blue-600 text-white rounded"
         >
-          Accedi
+          Torna al login
         </button>
-      )}
-    
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center h-screen space-y-4">
+      <h1 className="text-3xl font-bold">Benvenuto, {user.characterName}!</h1>
+      <button
+        onClick={handleGoToSheet}
+        className="bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        Vai alla tua scheda
+      </button>
+      <button
+        onClick={handleLogout}
+        className="bg-red-500 text-white px-4 py-2 rounded"
+      >
+        Logout
+      </button>
+    </div>
+  );
+}
   
 
