@@ -133,3 +133,5 @@ return (
     </div>
   </div>
 )};
+
+export default SchedaMatteo;
