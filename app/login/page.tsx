@@ -29,7 +29,8 @@ export default function LoginPage() {
     );
 
     if (user) {
-      router.push('/dashboard/${user.username}');
+      localStorage.setItem('user', JSON.stringify(user));
+      router.push('/');('/dashboard/${user.username}');
     } else {
       setError('Nome utente o password errati!');
     }
