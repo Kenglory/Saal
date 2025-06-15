@@ -36,10 +36,16 @@ export default function HomePage() {
   };
 
   const handleGoToSheet = () => {
-    if (user && user.username) {
-      router.push(`/dashboard/${user.username}`);
-    }
-  };
+    const handleGoToSheet = () => {
+  if (user?.username === 'samuele') {
+    router.push('/dashboard/samuele');
+  } else if (user?.username === 'matteo') {
+    router.push('/dashboard/matteo');
+  } else {
+    alert('Utente non riconosciuto');
+  }
+};
+  
 
   if (loading) return <p className="p-8 text-lg">Caricamento in corso...</p>;
 
@@ -76,4 +82,4 @@ export default function HomePage() {
   );
 }
   
-
+}
