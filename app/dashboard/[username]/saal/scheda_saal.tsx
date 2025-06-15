@@ -22,7 +22,7 @@ const defaultStats: SaalStats = {
 };
 
 export default function SaalDashboard() { 
-    const [stats, setStats] = useState<SaalStats>(defaultStats); 
+    const [stats] = useState<SaalStats>(defaultStats); 
     const router = useRouter();
 
 const handleLogout = () => { 
