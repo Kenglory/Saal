@@ -30,7 +30,7 @@ export default function LoginPage() {
 
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
-      router.push('/');('/dashboard/${user.username}');
+router.push('/');
     } else {
       setError('Nome utente o password errati!');
     }
