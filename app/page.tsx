@@ -36,30 +36,30 @@ export default function HomePage() {
   };
 
   if (loading) return null;
+  
+  const handleGoToSheet = () => {
+  if (user && user.username) {
+    router.push(`/dashboard/${user.username}`);
+  }
+};
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen p-4">
-      <h1 className="text-3xl font-bold mb-6">
-        {user ? 'Benvenuto, ${user}!' : 'Benvenuto!'}
-      </h1>
-
-      {user ? (
-        <div className="flex flex-col items-center gap-4">
-          <button
-            onClick={() => router.push('/dashboard/${user.username}')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
-          >
-            Vai alla tua scheda
-          </button>
-
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded"
-          >
-            Logout
-          </button>
-        </div>
-      ) : (
+  <div className="flex flex-col items-center justify-center h-screen space-y-4">
+    {user && (
+      <>
+        <h1 className="text-3xl font-bold">Benvenuto, {user.characterName}!</h1>
+        <button onClick={handleGoToSheet} className="bg-blue-600 text-white px-4 py-2 rounded">
+          Vai alla tua scheda
+        </button>
+        <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded">
+          Logout
+        </button>
+      </>
+    )}
+  </div>
+);
+       
+      (
         <button
           onClick={handleLogin}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
@@ -67,6 +67,6 @@ export default function HomePage() {
           Accedi
         </button>
       )}
-    </div>
-  );
-}
+    
+  
+
