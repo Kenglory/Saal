@@ -4,7 +4,7 @@ interface InventorySlot {
 name: string;
 description: string;
 }
-interface MatteoData {
+  interface MatteoData {
 currentHP: number;
 maxHP: number;
 focus: number;
@@ -14,7 +14,7 @@ inventory: InventorySlot[];
 
 const SchedaMatteo = () => {
 
-    const [data, setData] = useState({
+    const [data, setData] = useState<MatteoData>({
 currentHP: 800,
 maxHP: 1000,
 focus: 5,
