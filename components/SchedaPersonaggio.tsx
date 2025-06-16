@@ -59,6 +59,9 @@ const SchedaSaal = () => {
         const data = docSnap.data() as CharacterData;
         setCharacter(data);
         setStatPointsAvailable(data.level);
+        console.log("Dati ricevuti da Firebase:", data);
+      } else {
+        console.log("Documento non trovato in Firebase.");
       }
     };
     fetchCharacter();
@@ -73,7 +76,7 @@ const SchedaSaal = () => {
     if (!character) return;
     const updated = {
       ...character,
-      currentHP: Math.max(0, Math.min(character.maxHP, character.currentHP + amount))
+      currentHP: Math.max(0, Math.min(character.maxHP, character.currentHP + amount)),
     };
     saveCharacter(updated);
   };
@@ -82,7 +85,7 @@ const SchedaSaal = () => {
     if (!character) return;
     const updated = {
       ...character,
-      focus: Math.max(0, character.focus + amount)
+      focus: Math.max(0, character.focus + amount),
     };
     saveCharacter(updated);
   };
@@ -103,7 +106,7 @@ const SchedaSaal = () => {
       ...character,
       exp: newExp,
       level: newLevel,
-      focus: character.focus + 3 * (newLevel - character.level)
+      focus: character.focus + 3 * (newLevel - character.level),
     };
     saveCharacter(updated);
     setExpInput(0);
@@ -114,7 +117,7 @@ const SchedaSaal = () => {
     if (!character) return;
     const updated = {
       ...character,
-      karma: Math.max(-10000, Math.min(10000, character.karma + amount))
+      karma: Math.max(-10000, Math.min(10000, character.karma + amount)),
     };
     saveCharacter(updated);
   };
@@ -126,8 +129,8 @@ const SchedaSaal = () => {
       ...character,
       stats: {
         ...character.stats,
-        [key]: Math.max(0, character.stats[key] + amount)
-      }
+        [key]: Math.max(0, character.stats[key] + amount),
+      },
     };
     setStatPointsAvailable(prev => Math.max(0, prev - amount));
     saveCharacter(updated);
@@ -146,7 +149,9 @@ const SchedaSaal = () => {
     alert("Cavalier Quiete è stato evocato!");
   };
 
-  if (!character) return <p>Caricamento...</p>;
+  if (!character) {
+    return <div className="p-6">Caricamento...</div>;
+  }
 
   return (
     <div className="p-6 space-y-4">
