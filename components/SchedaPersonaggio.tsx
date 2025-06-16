@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 interface Stats {
   forza: number;
@@ -23,54 +25,74 @@ interface CharacterData {
   maxHP: number;
   focus: number;
   exp: number;
+  karma: number;
   stats: Stats;
   inventory: InventorySlot[];
+  gold: {
+    platino: number;
+    oro: number;
+    argento: number;
+    petali: number;
+    biglie: number;
+    extra1: number;
+    extra2: number;
+    extra3: number;
+  };
+  culture: string;
+  languages: string;
+  abilities: string[];
 }
 
 const SchedaPersonaggio = () => {
-  const [character, setCharacter] = useState<CharacterData>({
-    name: "Sa'Al",
-    level: 10,
-    currentHP: 1200,
-    maxHP: 1500,
-    focus: 10,
-    exp: 40,
-    stats: {
-      forza: 2,
-      destrezza: 2,
-      saggezza: 2,
-      costituzione: 2,
-      velocita: 1,
-      carisma: 1,
-      intelligenza: 2,
-    },
-    inventory: Array.from({ length: 30 }, () => ({ name: "", description: "" }))
-  });
-
+  const [character, setCharacter] = useState<CharacterData | null>(null);
   const [statPointsAvailable, setStatPointsAvailable] = useState(0);
   const [expInput, setExpInput] = useState(0);
   const [hpInput, setHpInput] = useState(0);
+  const [karmaInput, setKarmaInput] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    setStatPointsAvailable(character.level);
-  }, [character.level]);
+    const fetchCharacter = async () => {
+      const docRef = doc(db, "personaggi", "saal");
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setCharacter(docSnap.data() as CharacterData);
+      } else {
+        console.log("Nessun documento trovato!");
+      }
+    };
+
+    fetchCharacter();
+  }, []);
+
+  useEffect(() => {
+    if (character) {
+      setStatPointsAvailable(character.level);
+    }
+  }, [character?.level]);
+
+  if (!character) return <p>Caricamento...</p>;
 
   const handleStatChange = (key: keyof Stats, amount: number) => {
     if (amount > 0 && statPointsAvailable === 0) return;
-    setCharacter((prev) => ({
-      ...prev,
-      stats: {
-        ...prev.stats,
-        [key]: Math.max(0, prev.stats[key] + amount),
-      },
-    }));
+    setCharacter((prev) =>
+      prev
+        ? {
+            ...prev,
+            stats: {
+              ...prev.stats,
+              [key]: Math.max(0, prev.stats[key] + amount),
+            },
+          }
+        : null
+    );
     setStatPointsAvailable((prev) => Math.max(0, prev - amount));
   };
 
   const confirmStats = () => {
     if (statPointsAvailable > 0) {
-      setErrorMessage(`Devi ancora assegnare ${statPointsAvailable} punti statistica.`);
+      setErrorMessage(`Devi ancora assegnare ${statPointsAvailable} punti.`);
       return;
     }
     setErrorMessage("");
@@ -78,17 +100,29 @@ const SchedaPersonaggio = () => {
   };
 
   const updateHP = (amount: number) => {
-    setCharacter((prev) => ({
-      ...prev,
-      currentHP: Math.max(0, Math.min(prev.maxHP, prev.currentHP + amount))
-    }));
+    setCharacter((prev) =>
+      prev
+        ? {
+            ...prev,
+            currentHP: Math.max(0, Math.min(prev.maxHP, prev.currentHP + amount)),
+          }
+        : null
+    );
   };
 
   const updateFocus = (amount: number) => {
-    setCharacter((prev) => ({
-      ...prev,
-      focus: Math.max(0, prev.focus + amount)
-    }));
+    setCharacter((prev) =>
+      prev
+        ? {
+            ...prev,
+            focus: Math.max(0, prev.focus + amount),
+          }
+        : null
+    );
+  };
+
+  const useBeast = () => {
+    updateFocus(-4);
   };
 
   const updateEXP = () => {
@@ -102,138 +136,127 @@ const SchedaPersonaggio = () => {
       newLevel--;
       newExp += 100;
     }
-    setCharacter((prev) => ({
-      ...prev,
-      exp: newExp,
-      level: newLevel
-    }));
+    setCharacter((prev) =>
+      prev
+        ? {
+            ...prev,
+            exp: newExp,
+            level: newLevel,
+          }
+        : null
+    );
     setExpInput(0);
   };
 
+  const updateKarma = (amount: number) => {
+    setCharacter((prev) =>
+      prev
+        ? {
+            ...prev,
+            karma: Math.max(-10000, Math.min(10000, prev.karma + amount)),
+          }
+        : null
+    );
+  };
+
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-4xl font-bold">{character.name}</h1>
+    <div className="p-4 space-y-4">
+      <h1 className="text-3xl font-bold">{character.name}</h1>
+      <p>Livello: {character.level}</p>
+      <motion.div animate={{ width: `${character.exp}%` }} className="bg-green-500 h-2 rounded" />
 
-      {/* Livello */}
-      <motion.div
-        className="text-2xl font-semibold"
-        animate={{ scale: [1, 1.1, 1] }}
-        transition={{ duration: 0.5 }}
-        key={character.level}
-      >
-        Livello: {character.level}
-      </motion.div>
-
-      {/* HP */}
-      <div>
-        <p className="font-semibold">HP: {character.currentHP} / {character.maxHP}</p>
-        <div className="w-full bg-gray-300 rounded h-4">
-          <div
-            className="bg-red-600 h-4 rounded"
-            style={{ width: `${(character.currentHP / character.maxHP) * 100}%` }}
-          />
-        </div>
-        <div className="flex gap-2 mt-2">
-          <button onClick={() => updateHP(10)} className="px-2 py-1 bg-green-600 text-white">+</button>
-          <button onClick={() => updateHP(-10)} className="px-2 py-1 bg-red-600 text-white">-</button>
-          <input
-            type="number"
-            value={hpInput}
-            onChange={(e) => setHpInput(Number(e.target.value))}
-            className="border px-2"
-          />
-          <button onClick={() => updateHP(hpInput)} className="bg-blue-500 text-white px-2">Conferma</button>
-        </div>
+      <div className="flex gap-2">
+        <button onClick={() => updateEXP()} className="bg-blue-500 px-2 text-white">Conferma EXP</button>
+        <input type="number" value={expInput} onChange={(e) => setExpInput(Number(e.target.value))} className="border px-1" />
       </div>
 
-      {/* Focus */}
       <div>
-        <p className="font-semibold">Focus: {character.focus}</p>
-        <div className="flex gap-2">
-          <button onClick={() => updateFocus(1)} className="px-2 py-1 bg-green-600 text-white">+</button>
-          <button onClick={() => updateFocus(-1)} className="px-2 py-1 bg-red-600 text-white">-</button>
-        </div>
+        <p>HP: {character.currentHP} / {character.maxHP}</p>
+        <button onClick={() => updateHP(10)}>+10</button>
+        <button onClick={() => updateHP(-10)}>-10</button>
+        <input type="number" value={hpInput} onChange={(e) => setHpInput(Number(e.target.value))} />
+        <button onClick={() => updateHP(hpInput)}>Conferma</button>
       </div>
 
-      {/* Esperienza */}
       <div>
-        <p className="font-semibold">EXP: {character.exp} / 100</p>
-        <div className="w-full bg-white border rounded h-4">
-          <motion.div
-            className="bg-green-500 h-4 rounded"
-            animate={{ width: `${character.exp}%` }}
-            transition={{ duration: 0.5 }}
-          />
-        </div>
-        <div className="flex gap-2 mt-2">
-          <input
-            type="number"
-            value={expInput}
-            onChange={(e) => setExpInput(Number(e.target.value))}
-            className="border px-2"
-          />
-          <button onClick={updateEXP} className="bg-blue-600 text-white px-3 py-1">Conferma</button>
-        </div>
+        <p>Focus: {character.focus}</p>
+        <button onClick={() => updateFocus(1)}>+</button>
+        <button onClick={() => updateFocus(-1)}>-</button>
+        <button onClick={useBeast}>Usa Bestia (-4)</button>
       </div>
 
-      {/* Statistiche */}
       <div>
-        <h2 className="text-xl font-semibold">Statistiche</h2>
+        <p>Karma: {character.karma}</p>
+        <button onClick={() => updateKarma(10)}>+10</button>
+        <button onClick={() => updateKarma(-10)}>-10</button>
+        <input type="number" value={karmaInput} onChange={(e) => setKarmaInput(Number(e.target.value))} />
+        <button onClick={() => updateKarma(karmaInput)}>Conferma</button>
+      </div>
+
+      <div>
+        <h2>Statistiche</h2>
         <p>Punti disponibili: {statPointsAvailable}</p>
         {Object.entries(character.stats).map(([key, value]) => (
-          <div key={key} className="flex items-center gap-2">
-            <span className="capitalize w-32">{key}:</span>
+          <div key={key} className="flex gap-2">
+            <span>{key}:</span>
             <span>{value}</span>
-            <button onClick={() => handleStatChange(key as keyof Stats, 1)} className="bg-green-500 px-2">+</button>
-            <button onClick={() => handleStatChange(key as keyof Stats, -1)} className="bg-red-500 px-2">-</button>
+            <button onClick={() => handleStatChange(key as keyof Stats, 1)}>+</button>
+            <button onClick={() => handleStatChange(key as keyof Stats, -1)}>-</button>
           </div>
         ))}
         {statPointsAvailable > 0 && (
           <>
-            <button onClick={confirmStats} className="mt-2 bg-yellow-500 px-4 py-1">
-              Conferma Statistiche
-            </button>
-            {errorMessage && <p className="text-red-600 mt-1">{errorMessage}</p>}
+            <button onClick={confirmStats} className="bg-yellow-400 px-2 py-1">Conferma</button>
+            <p className="text-red-500">{errorMessage}</p>
           </>
         )}
       </div>
 
-      {/* Inventario */}
       <div>
-        <h2 className="text-xl font-semibold mt-6">Inventario</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-2">
-          {character.inventory.map((slot, index) => (
-            <div key={index} className="border p-2 rounded bg-white">
-              <input
-                type="text"
-                placeholder="Oggetto"
-                value={slot.name}
-                onChange={(e) => {
-                  const newInventory = [...character.inventory];
-                  newInventory[index] = {
-                    ...newInventory[index],
-                    name: e.target.value
-                  };
-                  setCharacter({ ...character, inventory: newInventory });
-                }}
-                className="w-full border-b mb-1"
-              />
-              <textarea
-                placeholder="Descrizione"
-                value={slot.description}
-                onChange={(e) => {
-                  const newInventory = [...character.inventory];
-                  newInventory[index] = {
-                    ...newInventory[index],
-                    description: e.target.value
-                  };
-                  setCharacter({ ...character, inventory: newInventory });
-                }}
-                className="w-full text-sm"
-              />
+        <h2>Inventario</h2>
+        <div className="grid grid-cols-3 gap-2">
+          {character.inventory.map((slot, i) => (
+            <div key={i}>
+              <input type="text" value={slot.name} onChange={(e) => {
+                const updated = [...character.inventory];
+                updated[i].name = e.target.value;
+                setCharacter({ ...character, inventory: updated });
+              }} />
+              <textarea value={slot.description} onChange={(e) => {
+                const updated = [...character.inventory];
+                updated[i].description = e.target.value;
+                setCharacter({ ...character, inventory: updated });
+              }} />
             </div>
           ))}
         </div>
+      </div>
+
+      <div>
+        <h2>Monete</h2>
+        {Object.entries(character.gold).map(([key, value]) => (
+          <div key={key} className="flex gap-2">
+            <span>{key}:</span>
+            <span>{value}</span>
+          </div>
+        ))}
+      </div>
+
+      <div>
+        <h2>Culto</h2>
+        <textarea value={character.culture} readOnly className="w-full border" />
+      </div>
+
+      <div>
+        <h2>Lingue</h2>
+        <textarea value={character.languages} readOnly className="w-full border" />
+      </div>
+
+      <div>
+        <h2>Abilità / Incantesimi</h2>
+        {character.abilities.map((a, i) => (
+          <input key={i} value={a} readOnly className="w-full border my-1" />
+        ))}
       </div>
     </div>
   );
