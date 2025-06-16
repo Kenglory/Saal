@@ -1,4 +1,4 @@
-// Master - master
+// master - master
 'use client';
 
 export function MasterPage() {
