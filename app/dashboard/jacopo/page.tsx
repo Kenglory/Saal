@@ -1,4 +1,6 @@
 // Njord - jacopo
+'use client';
+
 export function NjordPage() {
   return (
     <div className="p-6 text-center">

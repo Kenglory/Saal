@@ -1,4 +1,6 @@
 // Hydra - stefano
+'use client';
+
 export function HydraPage() {
   return (
     <div className="p-6 text-center">

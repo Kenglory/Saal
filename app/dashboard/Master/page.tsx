@@ -1,4 +1,6 @@
 // Master - master
+'use client';
+
 export function MasterPage() {
   return (
     <div className="p-6 text-center">
