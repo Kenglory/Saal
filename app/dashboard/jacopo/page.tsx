@@ -1,7 +1,7 @@
 // Njord - jacopo
 'use client';
 
-export function NjordPage() {
+export default function NjordPage() {
   return (
     <div className="p-6 text-center">
       <h1 className="text-3xl font-bold">🌊 Njord</h1>

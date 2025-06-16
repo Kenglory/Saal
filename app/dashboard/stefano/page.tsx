@@ -1,7 +1,7 @@
 // Hydra - stefano
 'use client';
 
-export function HydraPage() {
+export default function HydraPage() {
   return (
     <div className="p-6 text-center">
       <h1 className="text-3xl font-bold">🐍 Hydra</h1>

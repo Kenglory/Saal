@@ -1,7 +1,7 @@
 // Master - master
 'use client';
 
-export function MasterPage() {
+export default function MasterPage() {
   return (
     <div className="p-6 text-center">
       <h1 className="text-3xl font-bold">👑 Master</h1>
