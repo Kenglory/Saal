@@ -36,12 +36,30 @@ export default function HomePage() {
   };
 
     const handleGoToSheet = () => {
-  if (user?.username === 'samuele') {
-    router.push('/dashboard/samuele');
-  } else if (user?.username === 'matteo') {
-    router.push('/dashboard/matteo');
-  } else {
-    alert('Utente non riconosciuto');
+  switch (user?.username) {
+    case 'samuele':
+      router.push('/dashboard/samuele');
+      break;
+    case 'matteo':
+      router.push('/dashboard/matteo');
+      break;
+    case 'davide':
+      router.push('/dashboard/davide');
+      break;
+    case 'stefano':
+      router.push('/dashboard/stefano');
+      break;
+    case 'oliver':
+      router.push('/dashboard/oliver');
+      break;
+    case 'jacopo':
+      router.push('/dashboard/jacopo');
+      break;
+    case 'master':
+      router.push('/dashboard/master');
+      break;
+    default:
+      alert('Utente non riconosciuto!');
   }
 };
   
