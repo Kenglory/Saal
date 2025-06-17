@@ -6,8 +6,16 @@ import { motion } from 'framer-motion';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import styles from './SchedaSaal.module.css';
-import Image from 'next/image';
-import saalImg from '@/public/saal.png'; // salva la tua immagine come public/saal.png
+
+import Image from "next/image";
+
+<Image
+  src="/saal.png"
+  alt="Sa'Al"
+  width={300}
+  height={500}
+  className="mx-auto mb-4 rounded-xl border-4 border-yellow-400 shadow-xl"
+/>
 
 interface Stats {
   forza: number;
@@ -66,11 +74,11 @@ const SchedaSaal = () => {
       {character ? (
         <div className={styles.sheet}>
           <div className={styles.header}>
-            <Image src={saalImg} alt="Sa'Al" className={styles.portrait} />
+            <Image src="/saal.png" alt="Sa'Al" className={styles.portrait} />
             <div>
               <h1>{character.name}</h1>
               <motion.p animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 0.5 }}>Livello: {character.level}</motion.p>
-              <p>EXP: {character.exp} / 100</p>
+              <p>EXP: {character.exp} / 12000</p>
               <p>Focus: {character.focus}</p>
               <p>Karma: {character.karma}</p>
             </div>
