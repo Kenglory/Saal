@@ -1,0 +1,45 @@
+.container {
+  background-color: #f8f3e9;
+  padding: 2rem;
+  font-family: 'Press Start 2P', cursive;
+  color: #222;
+}
+
+.sheet {
+  max-width: 900px;
+  margin: auto;
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px solid #d2b48c;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 12px #00000022;
+}
+
+.header {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.portrait {
+  width: 200px;
+  height: auto;
+  border: 2px solid #111;
+  border-radius: 10px;
+}
+
+.statsBox, .inventoryBox, .moneteBox, .extraBox {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px dashed #999;
+  border-radius: 8px;
+  background: #fffdf6;
+}
+
+.itemSlot {
+  background: #f4f0e0;
+  border: 1px solid #aaa;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+}
