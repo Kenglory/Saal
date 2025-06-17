@@ -44,6 +44,11 @@
 }
 
 :root {
+  :root {
+  --pergamena: #fdf6e3;
+  --inchiostro: #2f2f2f;
+  --oro: #d4af37;
+}
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -116,7 +121,23 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--pergamena);
+    color: var(--inchiostro);
+    font-family: 'Cinzel Decorative', serif;
   }
+}
+
+
+.btn {
+  @apply bg-yellow-700 text-white py-2 px-4 rounded hover:bg-yellow-800 transition duration-300;
+}
+
+.input {
+  @apply border border-inchiostro bg-white text-inchiostro rounded px-2 py-1 w-full;
+}
+
+.section-title {
+  @apply text-2xl text-oro font-bold border-b border-inchiostro pb-1 mb-2;
 }
