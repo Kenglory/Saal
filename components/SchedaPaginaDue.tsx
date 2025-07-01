@@ -6,24 +6,26 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
 
+interface Riga {
+  titolo: string;
+  descrizione: string;
+}
+
 export default function SchedaPaginaDue() {
   const { user } = useAuth();
   const uid = user?.uid;
 
   const [confermaSalvataggio, setConfermaSalvataggio] = useState("");
 
-  // Stati locali
-  const [abilita, setAbilita] = useState([{ titolo: "", descrizione: "" }]);
-  const [inventario, setInventario] = useState([{ titolo: "", descrizione: "" }]);
-  const [monete, setMonete] = useState([{ titolo: "", descrizione: "" }]);
-  const [lingue, setLingue] = useState([{ titolo: "", descrizione: "" }]);
-  const [forme, setForme] = useState([{ titolo: "", descrizione: "" }]);
+  const [abilita, setAbilita] = useState<Riga[]>([{ titolo: "", descrizione: "" }]);
+  const [inventario, setInventario] = useState<Riga[]>([{ titolo: "", descrizione: "" }]);
+  const [monete, setMonete] = useState<Riga[]>([{ titolo: "", descrizione: "" }]);
+  const [lingue, setLingue] = useState<Riga[]>([{ titolo: "", descrizione: "" }]);
+  const [forme, setForme] = useState<Riga[]>([{ titolo: "", descrizione: "" }]);
 
-  // 👇 FLAG per evitare ricariche inutili
-  const [caricato, setCaricato] = useState(false);
-
+  // Carica una sola volta da Firebase
   useEffect(() => {
-    if (!uid || caricato) return;
+    if (!uid) return;
 
     const loadData = async () => {
       const ref = doc(db, "schede", uid);
@@ -36,52 +38,61 @@ export default function SchedaPaginaDue() {
         setLingue(data.lingue || [{ titolo: "", descrizione: "" }]);
         setForme(data.forme || [{ titolo: "", descrizione: "" }]);
       }
-      setCaricato(true);
     };
 
     loadData();
-  }, [uid, caricato]);
+  }, [uid]);
 
-  // 💾 SALVA SU FIREBASE SOLO QUANDO PREMUTO
+  // Salva tutto su Firebase
   const salvaTutto = () => {
     if (!uid) return;
     const ref = doc(db, "schede", uid);
-    setDoc(
-      ref,
-      {
-        paginaDue: {
-          abilita,
-          inventario,
-          monete,
-          lingue,
-          forme,
-        },
+    setDoc(ref, {
+      paginaDue: {
+        abilita,
+        inventario,
+        monete,
+        lingue,
+        forme,
       },
-      { merge: true }
-    );
+    }, { merge: true });
+
     setConfermaSalvataggio("✔️ Tutto salvato con successo!");
     setTimeout(() => setConfermaSalvataggio(""), 3000);
   };
 
-  // 🔄 Aggiorna SOLO lo stato locale
-  const aggiornaValore = (setState: any, index: number, campo: string, valore: string) => {
-    setState((prev: any[]) => {
+  // Aggiorna stato locale
+  const aggiornaValore = (
+    setState: React.Dispatch<React.SetStateAction<Riga[]>>,
+    index: number,
+    campo: keyof Riga,
+    valore: string
+  ) => {
+    setState((prev) => {
       const nuovi = [...prev];
       nuovi[index] = { ...nuovi[index], [campo]: valore };
       return nuovi;
     });
   };
 
-  const aggiungiRiga = (setState: any) => {
-    setState((prev: any[]) => [...prev, { titolo: "", descrizione: "" }]);
+  const aggiungiRiga = (setState: React.Dispatch<React.SetStateAction<Riga[]>>) => {
+    setState((prev) => [...prev, { titolo: "", descrizione: "" }]);
   };
 
-  const eliminaRiga = (setState: any, index: number) => {
-    setState((prev: any[]) => prev.filter((_, i) => i !== index));
+  const eliminaRiga = (setState: React.Dispatch<React.SetStateAction<Riga[]>>, index: number) => {
+    setState((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ✨ Componente Sezione
-  const Sezione = ({ titolo, dati, setDati }: { titolo: string; dati: any[]; setDati: any }) => (
+  // Componente Sezione
+  const Sezione = ({
+    titolo,
+    dati,
+    setDati,
+  }: {
+    titolo: string;
+    dati: Riga[];
+    setDati: React.Dispatch<React.SetStateAction<Riga[]>>;
+  }) => (
     <div className="mb-6 border-b pb-4">
       <h2 className="text-xl font-bold mb-2 border-b-2 pb-1 border-gray-400">{titolo}</h2>
       {dati.map((riga, index) => (
