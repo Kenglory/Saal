@@ -11,7 +11,7 @@ export const getRouteForUser = (uid: string): string => {
       return "/dashboard/stefano";
     case "UID_OLIVER":
       return "/dashboard/oliver";
-    case "UID_JACOPO":
+    case "wnH3xIRZ2IduUf80f2p8ymTwg0N2":
       return "/dashboard/jacopo";
     case "UID_ANTONIO":
       return "/dashboard/master";

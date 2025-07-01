@@ -6,7 +6,6 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
-
 import Bar from '@/components/bar';
 
 interface Stats {
@@ -113,6 +112,12 @@ export default function SchedaPaginaUno() {
     }
   }, [exp]);
 
+  const salvaBar = async (campo: string, valore: number) => {
+    if (!uid) return;
+    const ref = doc(db, 'schede', uid);
+    await setDoc(ref, { [campo]: valore }, { merge: true });
+  };
+
   const salvaDatiGenerali = async () => {
     if (!uid) return;
     const ref = doc(db, 'schede', uid);
@@ -184,10 +189,10 @@ export default function SchedaPaginaUno() {
       <hr className="my-4 border-gray-400" />
 
       <div className="flex flex-col gap-4">
-        <Bar tipo="hp" attuale={hp} massimo={hpMax} setAttuale={setHp} setMassimo={setHpMax} />
-        <Bar tipo="focus" attuale={focus} massimo={focusMax} setAttuale={setFocus} setMassimo={setFocusMax} />
-        <Bar tipo="exp" attuale={exp} massimo={expMax} setAttuale={setExp} setMassimo={setExpMax} />
-        <Bar tipo="karma" attuale={karma} massimo={karmaMax} setAttuale={setKarma} setMassimo={setKarmaMax} />
+        <Bar tipo="hp" attuale={hp} massimo={hpMax} setAttuale={(val) => { setHp(val); salvaBar('hp', val); }} setMassimo={(val) => { setHpMax(val); salvaBar('hpMax', val); }} />
+        <Bar tipo="focus" attuale={focus} massimo={focusMax} setAttuale={(val) => { setFocus(val); salvaBar('focus', val); }} setMassimo={(val) => { setFocusMax(val); salvaBar('focusMax', val); }} />
+        <Bar tipo="exp" attuale={exp} massimo={expMax} setAttuale={(val) => { setExp(val); salvaBar('exp', val); }} setMassimo={(val) => { setExpMax(val); salvaBar('expMax', val); }} />
+        <Bar tipo="karma" attuale={karma} massimo={karmaMax} setAttuale={(val) => { setKarma(val); salvaBar('karma', val); }} setMassimo={(val) => { setKarmaMax(val); salvaBar('karmaMax', val); }} />
       </div>
 
       <hr className="my-4 border-gray-400" />
