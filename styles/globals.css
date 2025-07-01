@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 👇 Stile base pulito */
+@layer base {
+  body {
+    @apply bg-white text-black font-sans;
+  }
+
+  :focus {
+    @apply outline-outline;
+  }
+
+  *, ::before, ::after {
+    @apply border-border;
+  }
+}
+
+/* 👇 Componenti personalizzati */
+@layer components {
+  /* Barre colorate */
+  .bg-hp {
+    @apply bg-red-600;
+  }
+
+  .bg-focus {
+    @apply bg-blue-600;
+  }
+
+  .bg-exp {
+    @apply bg-green-600;
+  }
+
+  .bg-karma {
+    @apply bg-purple-600;
+  }
+
+  /* Pulsanti standard */
+  .btn {
+    @apply px-4 py-2 rounded text-white bg-gray-700 hover:bg-gray-800 transition;
+  }
+
+  /* Input standard */
+  .input {
+    @apply border border-gray-400 px-2 py-1 rounded w-full;
+  }
+
+  /* Titoli */
+  .section-title {
+    @apply text-xl font-bold border-b border-gray-400 pb-1 mb-2;
+  }
+}

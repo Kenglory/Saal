@@ -1,102 +1,29 @@
+// app/page.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-interface User {
-  username: string;
-  password: string;
-  characterName: string;
-}
-
 export default function HomePage() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      setUser(parsed);
-      console.log('✅ Utente loggato:', parsed.characterName);
-    } else {
-      console.log('⚠️ Nessun utente trovato nel localStorage');
-    }
-    setLoading(false);
-  }, []);
-
-  const handleLogin = () => {
-    router.push('/login');
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    router.push('/login');
-  };
-
-    const handleGoToSheet = () => {
-  switch (user?.username) {
-    case 'samuele':
-      router.push('/dashboard/samuele');
-      break;
-    case 'matteo':
-      router.push('/dashboard/matteo');
-      break;
-    case 'davide':
-      router.push('/dashboard/davide');
-      break;
-    case 'stefano':
-      router.push('/dashboard/stefano');
-      break;
-    case 'oliver':
-      router.push('/dashboard/oliver');
-      break;
-    case 'jacopo':
-      router.push('/dashboard/jacopo');
-      break;
-    case 'master':
-      router.push('/dashboard/master');
-      break;
-    default:
-      alert('Utente non riconosciuto!');
-  }
-};
-  
-
-  if (loading) return <p className="p-8 text-lg">Caricamento in corso...</p>;
-
-  if (!user) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen text-center space-y-4">
-        <p className="text-xl text-red-500">Nessun utente trovato. Effettua il login per continuare.</p>
-        <button
-          onClick={handleLogin}
-          className="px-4 py-2 bg-blue-600 text-white rounded"
-        >
-          Torna al login
-        </button>
-      </div>
-    );
-  }
+    // Se vuoi reindirizzare automaticamente al login, decommenta la riga qui sotto:
+    // router.push('/login');
+  }, [router]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen space-y-4">
-      <h1 className="text-3xl font-bold">Benvenuto, {user.characterName}!</h1>
+    <main className="flex flex-col items-center justify-center min-h-screen bg-white text-black px-4">
+      <h1 className="text-4xl font-bold mb-4">✨ Benvenuto nell'app di Cronache Di Dusius ✨</h1>
+      <p className="text-lg mb-6 text-center">
+        Da qui puoi accedere alla tua scheda giocatore o forse...non te lo dico dai
+      </p>
       <button
-        onClick={handleGoToSheet}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
+        onClick={() => router.push('/login')}
+        className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
       >
-        Vai alla tua scheda
+        🔐 Accedi con Google
       </button>
-      <button
-        onClick={handleLogout}
-        className="bg-red-500 text-white px-4 py-2 rounded"
-      >
-        Logout
-      </button>
-    </div>
+    </main>
   );
 }
-  
-

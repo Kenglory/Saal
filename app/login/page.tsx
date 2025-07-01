@@ -1,59 +1,50 @@
 'use client';
 
-import { useState } from 'react'; import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
+import { auth } from '@/lib/firebase';
+import { getRouteForUser } from '@/lib/getRouteForUser';
 
-interface User { username: string; password: string; characterName: string; }
 
-export default function LoginPage() { const router = useRouter(); const [username, setUsername] = useState(''); const [password, setPassword] = useState(''); const [error, setError] = useState('');
+export default function LoginPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
-const handleLogin = async () => { if (!username.trim() || !password.trim()) { setError('Inserisci nome utente e password!'); return; }
+  useEffect(() => {
+    if (!loading && user) {
+      const path = getRouteForUser(user.uid);     
+      router.push(path);
+    }
+  }, [user, loading, router]);
 
-try {
-  const res = await fetch('/api/users');
-  const users: User[] = await res.json();
+useEffect(() => {
+  if (!loading && user) {
+    console.log("✅ USER LOGGATO:", user); // 👈 aggiungi qui
+    const path = getRouteForUser(user.uid);
+    router.push(path);
+  }
+}, [user, loading, router]);
 
-  const user = users.find(
-    (u) => u.username === username && u.password === password
-  );
+  const loginWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error("Errore nel login:", error);
+    }
+  };
 
-  if (user) {
-    localStorage.setItem('user', JSON.stringify(user));
-    router.push('/');
-  } else {
-    setError('Nome utente o password errati!');
-  }
-} catch {
-  setError('Errore durante il login. Riprova.');
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen space-y-6 bg-gray-100">
+      <h1 className="text-2xl font-bold">Login con Google</h1>
+      <button
+        onClick={loginWithGoogle}
+        className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+      >
+        Accedi con Google
+      </button>
+    </div>
+  );
 }
-
-};
-
-return ( <div className="flex flex-col items-center justify-center h-screen p-6"> <h1 className="text-3xl font-bold mb-6">Login Campagna D&D</h1>
-
-<input
-    type="text"
-    placeholder="Nome utente"
-    value={username}
-    onChange={(e) => setUsername(e.target.value)}
-    className="mb-3 p-2 border border-gray-300 rounded w-64"
-  />
-
-  <input
-    type="password"
-    placeholder="Password"
-    value={password}
-    onChange={(e) => setPassword(e.target.value)}
-    className="mb-4 p-2 border border-gray-300 rounded w-64"
-  />
-
-  <button
-    onClick={handleLogin}
-    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
-  >
-    Entra
-  </button>
-
-  {error && <p className="text-red-500 mt-4">{error}</p>}
-</div>
-
-); }
