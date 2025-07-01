@@ -24,7 +24,6 @@ export default function Bar({
   const [colpito, setColpito] = useState(false);
   const [valoreAttuale, setValoreAttuale] = useState(attuale);
   const [valoreMassimo, setValoreMassimo] = useState(massimo);
-  const [puntiDisponibili, setPuntiDisponibili] = useState(0);
 
   useEffect(() => {
     setValoreAttuale(attuale);
@@ -62,7 +61,9 @@ export default function Bar({
     <div className="mb-6 space-y-1">
       <div className="flex justify-between text-sm font-semibold">
         <span className="capitalize">{tipo}</span>
-        <span className="text-gray-700">{attuale} / {massimo}</span>
+        <span className="text-gray-700">
+          {attuale} / {massimo}
+        </span>
       </div>
 
       <div className="w-full h-3 bg-gray-300 rounded overflow-hidden">

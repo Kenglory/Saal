@@ -1,4 +1,3 @@
-// app/page.tsx
 'use client';
 
 import { useEffect } from 'react';
@@ -14,7 +13,7 @@ export default function HomePage() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-white text-black px-4">
-      <h1 className="text-4xl font-bold mb-4">✨ Benvenuto nell'app di Cronache Di Dusius ✨</h1>
+      <h1 className="text-4xl font-bold mb-4">✨ Benvenuto nell&apos;app di Cronache Di Dusius ✨</h1>
       <p className="text-lg mb-6 text-center">
         Da qui puoi accedere alla tua scheda giocatore o forse...non te lo dico dai
       </p>
