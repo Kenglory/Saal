@@ -16,20 +16,16 @@ export default function SchedaPaginaDue() {
   const uid = user?.uid;
 
   const [confermaSalvataggio, setConfermaSalvataggio] = useState("");
+  const [caricato, setCaricato] = useState(false);
 
-  // Draft locale
   const [draftAbilita, setDraftAbilita] = useState<Riga[]>([{ titolo: "", descrizione: "" }]);
   const [draftInventario, setDraftInventario] = useState<Riga[]>([{ titolo: "", descrizione: "" }]);
   const [draftMonete, setDraftMonete] = useState<Riga[]>([{ titolo: "", descrizione: "" }]);
   const [draftLingue, setDraftLingue] = useState<Riga[]>([{ titolo: "", descrizione: "" }]);
   const [draftForme, setDraftForme] = useState<Riga[]>([{ titolo: "", descrizione: "" }]);
 
-  const [caricato, setCaricato] = useState(false);
-
-  // Carica UNA SOLA VOLTA da Firebase
   useEffect(() => {
     if (!uid || caricato) return;
-
     const loadData = async () => {
       try {
         const ref = doc(db, "schede", uid);
@@ -47,11 +43,9 @@ export default function SchedaPaginaDue() {
         console.error("Errore caricamento dati:", error);
       }
     };
-
     loadData();
   }, [uid, caricato]);
 
-  // Salva tutto su Firebase
   const salvaTutto = () => {
     if (!uid) return;
     const ref = doc(db, "schede", uid);
@@ -64,12 +58,10 @@ export default function SchedaPaginaDue() {
         forme: draftForme,
       },
     }, { merge: true });
-
     setConfermaSalvataggio("✔️ Tutto salvato con successo!");
     setTimeout(() => setConfermaSalvataggio(""), 3000);
   };
 
-  // Aggiorna stato locale
   const aggiornaValore = (
     setState: React.Dispatch<React.SetStateAction<Riga[]>>,
     index: number,
@@ -91,7 +83,7 @@ export default function SchedaPaginaDue() {
     setState((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Componente Sezione
+  // 🔥 Componente Sezione
   const Sezione = ({
     titolo,
     dati,
@@ -101,33 +93,38 @@ export default function SchedaPaginaDue() {
     dati: Riga[];
     setDati: React.Dispatch<React.SetStateAction<Riga[]>>;
   }) => (
-    <div className="mb-6 border-b pb-4">
-      <h2 className="text-xl font-bold mb-2 border-b-2 pb-1 border-gray-400">{titolo}</h2>
+    <div className="mb-10">
+      <h2 className="text-2xl font-bold mb-4 border-b-2 pb-2 border-gray-400">{titolo}</h2>
       {dati.map((riga, index) => (
-        <div
-          key={index}
-          className="mb-4 p-3 border rounded-xl shadow-sm flex flex-col gap-2 bg-white"
-        >
-          <textarea
-            placeholder="Titolo"
-            value={riga.titolo}
-            onChange={(e) => aggiornaValore(setDati, index, "titolo", e.target.value)}
-            rows={3}
-            className="w-full px-3 py-2 border rounded-xl shadow-sm resize-y focus:outline-none focus:ring focus:border-blue-300"
-          />
-          <textarea
-            placeholder="Descrizione"
-            value={riga.descrizione}
-            onChange={(e) => aggiornaValore(setDati, index, "descrizione", e.target.value)}
-            rows={3}
-            className="w-full px-3 py-2 border rounded-xl shadow-sm resize-y focus:outline-none focus:ring focus:border-blue-300"
-          />
-          <button
-            onClick={() => eliminaRiga(setDati, index)}
-            className="self-end px-3 py-1 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
-          >
+        <div key={index} className="mb-8 p-6 border rounded-2xl shadow bg-white space-y-4">
+          <div className="flex flex-col space-y-1">
+            <label className="text-base font-semibold text-gray-800">Titolazzone </label>
+            <input
+              type="text"
+              placeholder="Es. Accanimento Aureo"
+              value={riga.titolo}
+              onChange={(e) => aggiornaValore(setDati, index, "titolo", e.target.value)}
+              className="w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring focus:border-blue-400 text-base bg-gray-50"
+            />
+          </div>
+          <div className="flex flex-col space-y-1">
+            <label className="text-base font-semibold text-gray-800">Descrizione  </label>
+            <textarea
+              placeholder="Scrivi qui la descrizione completa..."
+              value={riga.descrizione}
+              onChange={(e) => aggiornaValore(setDati, index, "descrizione", e.target.value)}
+              className="w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring focus:border-blue-400 text-base bg-gray-50"
+              style={{ height: "10rem", resize: "none" }}
+            />
+          </div>
+          <div className="flex justify-end">
+            <button
+              onClick={() => eliminaRiga(setDati, index)}
+              className="mt-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
+            >
             ➖ Rimuovi
-          </button>
+            </button>
+          </div>
         </div>
       ))}
       <button
@@ -140,8 +137,8 @@ export default function SchedaPaginaDue() {
   );
 
   return (
-    <div className="p-4 space-y-6 max-w-5xl mx-auto">
-      <div className="flex justify-start mb-4">
+    <div className="p-6 space-y-10 max-w-5xl mx-auto bg-gray-50 min-h-screen">
+      <div className="flex justify-start mb-6">
         <Link href="/scheda">
           <button className="px-4 py-2 bg-gray-700 text-white rounded-xl hover:bg-gray-800 transition">
             ⬅️ Torna alla Pagina 1
@@ -155,15 +152,15 @@ export default function SchedaPaginaDue() {
       <Sezione titolo="Lingue" dati={draftLingue} setDati={setDraftLingue} />
       <Sezione titolo="Forme" dati={draftForme} setDati={setDraftForme} />
 
-      <div className="text-center mt-6">
+      <div className="text-center mt-12">
         <button
           onClick={salvaTutto}
-          className="px-6 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition"
+          className="px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition"
         >
           💾 Salva Tutto
         </button>
         {confermaSalvataggio && (
-          <p className="mt-2 text-green-700 font-semibold animate-fade-in-out">
+          <p className="mt-3 text-green-700 font-semibold animate-fade-in-out">
             {confermaSalvataggio}
           </p>
         )}
