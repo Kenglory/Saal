@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -50,42 +50,43 @@ export default function SchedaPaginaUno() {
     carisma: 0,
     velocita: 0,
   });
-
   const [statPoints, setStatPoints] = useState(0);
   const [tempStats, setTempStats] = useState<Stats>({ ...stats });
 
-  useEffect(() => {
+  // ⚡️ LOAD
+  const loadData = useCallback(async () => {
     if (!uid) return;
-
-    const load = async () => {
-      const ref = doc(db, 'schede', uid);
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        const d = snap.data();
-        setNome(d.nome || '');
-        setCulto(d.culto || '');
-        setRazza(d.razza || '');
-        setLivello(d.livello || 1);
-        setInfoConfermate(d.infoConfermate || false);
-        setConfirmed(d.confirmed || false);
-        setStats(d.stats || stats);
-        setTempStats(d.stats || stats);
-        setStatPoints(d.statPoints ?? d.livello ?? 0);
-        setHp(d.hp ?? 1000);
-        setHpMax(d.hpMax ?? 1000);
-        setFocus(d.focus ?? 100);
-        setFocusMax(d.focusMax ?? 100);
-        setExp(d.exp ?? 0);
-        setExpMax(d.expMax ?? 1000);
-        setKarma(d.karma ?? 0);
-        setKarmaMax(d.karmaMax ?? 1000);
-      }
-    };
-    load();
+    const ref = doc(db, 'schede', uid);
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      const d = snap.data();
+      setNome(d.nome ?? '');
+      setCulto(d.culto ?? '');
+      setRazza(d.razza ?? '');
+      setLivello(d.livello ?? 1);
+      setInfoConfermate(d.infoConfermate ?? false);
+      setConfirmed(d.confirmed ?? false);
+      setStats(d.stats ?? stats);
+      setTempStats(d.stats ?? stats);
+      setStatPoints(d.statPoints ?? (d.livello ?? 0));
+      setHp(d.hp ?? 1000);
+      setHpMax(d.hpMax ?? 1000);
+      setFocus(d.focus ?? 100);
+      setFocusMax(d.focusMax ?? 100);
+      setExp(d.exp ?? 0);
+      setExpMax(d.expMax ?? 1000);
+      setKarma(d.karma ?? 0);
+      setKarmaMax(d.karmaMax ?? 1000);
+    }
   }, [uid]);
 
   useEffect(() => {
-    if (exp >= expMax) {
+    loadData();
+  }, [loadData]);
+
+  // ⚡️ LIVELLAMENTO
+  useEffect(() => {
+    if (exp >= expMax && uid) {
       const nuovoLivello = livello + 1;
       setLivello(nuovoLivello);
       setExp(0);
@@ -99,58 +100,73 @@ export default function SchedaPaginaUno() {
         setMostraAnimazione(false);
         setMessaggioSalvataggio('');
       }, 4000);
-      if (uid) {
-        const ref = doc(db, 'schede', uid);
-        setDoc(ref, {
-          livello: nuovoLivello,
-          exp: 0,
-          expMax: expMax + 1000,
-          focusMax: focusMax + 4,
-          statPoints: nuovoLivello,
-          confirmed: false
-        }, { merge: true });
-      }
+
+      const ref = doc(db, 'schede', uid);
+      setDoc(ref, {
+        livello: nuovoLivello,
+        exp: 0,
+        expMax: expMax + 1000,
+        focusMax: focusMax + 4,
+        statPoints: nuovoLivello,
+        confirmed: false
+      }, { merge: true }).catch(console.error);
     }
-  }, [exp]);
+  }, [exp, expMax, focusMax, livello, uid]);
 
-  const salvaBar = async (campo: string, valore: number) => {
+  // ⚡️ SAVE BAR
+  const salvaBar = useCallback(async (campo: string, valore: number) => {
     if (!uid) return;
-    const ref = doc(db, 'schede', uid);
-    await setDoc(ref, { [campo]: valore }, { merge: true });
-  };
+    try {
+      const ref = doc(db, 'schede', uid);
+      await setDoc(ref, { [campo]: valore }, { merge: true });
+    } catch (err) {
+      console.error(err);
+    }
+  }, [uid]);
 
-  const salvaDatiGenerali = async () => {
+  // ⚡️ SAVE DATI
+  const salvaDatiGenerali = useCallback(async () => {
     if (!uid) return;
-    const ref = doc(db, 'schede', uid);
-    await setDoc(ref, {
-      nome,
-      culto,
-      razza,
-      infoConfermate: true
-    }, { merge: true });
-    setInfoConfermate(true);
-    setModificaInfo(false);
-  };
+    try {
+      const ref = doc(db, 'schede', uid);
+      await setDoc(ref, {
+        nome,
+        culto,
+        razza,
+        infoConfermate: true
+      }, { merge: true });
+      setInfoConfermate(true);
+      setModificaInfo(false);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [uid, nome, culto, razza]);
 
-  const salvaTutto = async () => {
+  // ⚡️ SAVE TUTTO
+  const salvaTutto = useCallback(async () => {
     if (!uid) return;
-    const ref = doc(db, 'schede', uid);
-    await setDoc(ref, {
-      stats: tempStats,
-      confirmed: true,
-      statPoints: 0,
-      hp, hpMax,
-      focus, focusMax,
-      exp, expMax,
-      karma, karmaMax,
-    }, { merge: true });
-    setStats(tempStats);
-    setConfirmed(true);
-    setStatPoints(0);
-    setMessaggioSalvataggio('✔️ Statistiche confermate!');
-    setTimeout(() => setMessaggioSalvataggio(''), 3000);
-  };
+    try {
+      const ref = doc(db, 'schede', uid);
+      await setDoc(ref, {
+        stats: tempStats,
+        confirmed: true,
+        statPoints: 0,
+        hp, hpMax,
+        focus, focusMax,
+        exp, expMax,
+        karma, karmaMax,
+      }, { merge: true });
+      setStats(tempStats);
+      setConfirmed(true);
+      setStatPoints(0);
+      setMessaggioSalvataggio('✔️ Statistiche confermate!');
+      setTimeout(() => setMessaggioSalvataggio(''), 3000);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [uid, tempStats, hp, hpMax, focus, focusMax, exp, expMax, karma, karmaMax]);
 
+  // ⚡️ MODIFICA
   const modificaStat = (key: keyof Stats, valore: number) => {
     if (confirmed || statPoints <= 0) return;
     const nuovaStat = tempStats[key] + valore;
@@ -161,6 +177,7 @@ export default function SchedaPaginaUno() {
 
   return (
     <div className="p-4 space-y-6 max-w-5xl mx-auto bg-gray-50">
+      {/* DATI */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[{ label: 'Nome', value: nome, set: setNome },
           { label: 'Culto', value: culto, set: setCulto },
@@ -171,11 +188,12 @@ export default function SchedaPaginaUno() {
           </div>
         ))}
         <div>
-          <label className="text-sm font-semibold">Livello </label>
+          <label className="text-sm font-semibold">Livello</label>
           <input value={livello} disabled className="w-full border px-2 py-1 rounded shadow-sm" />
         </div>
       </div>
 
+      {/* BOTTONI */}
       {!infoConfermate && (
         <button onClick={salvaDatiGenerali} className="bg-blue-600 text-white px-4 py-2 rounded">Conferma Dati Iniziali</button>
       )}
@@ -188,6 +206,7 @@ export default function SchedaPaginaUno() {
 
       <hr className="my-6 border-gray-400" />
 
+      {/* BARRA */}
       <div className="flex flex-col gap-6">
         <Bar tipo="hp" attuale={hp} massimo={hpMax} setAttuale={setHp} setMassimo={setHpMax} salvaBar={salvaBar} />
         <Bar tipo="focus" attuale={focus} massimo={focusMax} setAttuale={setFocus} setMassimo={setFocusMax} salvaBar={salvaBar} />
@@ -202,7 +221,6 @@ export default function SchedaPaginaUno() {
           Hai {statPoints} punti da assegnare!
         </div>
       )}
-
       {messaggioSalvataggio && (
         <div className="text-center text-yellow-700 font-semibold animate-bounce">
           {messaggioSalvataggio}

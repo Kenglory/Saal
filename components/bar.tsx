@@ -29,14 +29,14 @@ export default function Bar({
 
   const percentuale = Math.max(0, Math.min((attuale / massimo) * 100, 100));
 
-  const etichette = {
+  const etichette: Record<BarProps["tipo"], string> = {
     hp: '❤️ HP',
     focus: '🧘‍♂️ Focus',
     exp: '⭐️ EXP',
     karma: '☯️ Karma',
   };
 
-  const colori = {
+  const colori: Record<BarProps["tipo"], string> = {
     hp: 'bg-red-500',
     focus: 'bg-blue-500',
     exp: 'bg-green-500',
@@ -44,13 +44,21 @@ export default function Bar({
   };
 
   const confermaAtt = () => {
-    setAttuale && setAttuale(valAtt);
-    salvaBar && salvaBar(tipo, valAtt);
+    if (setAttuale) {
+      setAttuale(valAtt);
+    }
+    if (salvaBar) {
+      salvaBar(tipo, valAtt);
+    }
   };
 
   const confermaMax = () => {
-    setMassimo && setMassimo(valMax);
-    salvaBar && salvaBar(tipo + 'Max', valMax);
+    if (setMassimo) {
+      setMassimo(valMax);
+    }
+    if (salvaBar) {
+      salvaBar(`${tipo}Max`, valMax);
+    }
   };
 
   return (
@@ -68,7 +76,7 @@ export default function Bar({
         <div
           className={`${colori[tipo]} h-full transition-all duration-500`}
           style={{ width: `${percentuale}%` }}
-        ></div>
+        />
       </div>
 
       {/* Input per modificare */}
