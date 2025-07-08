@@ -15,7 +15,9 @@ export const getRouteForUser = (uid: string): string => {
       return "/dashboard/jacopo";
     case "UID_ANTONIO":
       return "/dashboard/master";
-    default:
+    case "AV6Of157a7TA6oRRdcOjDo63rSr2":
+      return "/dashboard/matteo2";
+    default:
       return '/dashboard/${uid}'; // fallback per nuovi utenti o test
   }
 };
