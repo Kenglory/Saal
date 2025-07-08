@@ -56,6 +56,7 @@ export default function SchedaPaginaUno() {
 
   useEffect(() => {
     if (!uid) return;
+
     const load = async () => {
       const ref = doc(db, 'schede', uid);
       const snap = await getDoc(ref);
@@ -154,13 +155,12 @@ export default function SchedaPaginaUno() {
     if (confirmed || statPoints <= 0) return;
     const nuovaStat = tempStats[key] + valore;
     if (nuovaStat < 0) return;
-    if (valore > 0 && statPoints === 0) return;
     setTempStats((prev) => ({ ...prev, [key]: nuovaStat }));
     setStatPoints((prev) => prev - valore);
   };
 
   return (
-    <div className="p-4 space-y-4 max-w-5xl mx-auto">
+    <div className="p-4 space-y-6 max-w-5xl mx-auto bg-gray-50">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[{ label: 'Nome', value: nome, set: setNome },
           { label: 'Culto', value: culto, set: setCulto },
@@ -171,7 +171,7 @@ export default function SchedaPaginaUno() {
           </div>
         ))}
         <div>
-          <label className="text-sm font-semibold">Livello</label>
+          <label className="text-sm font-semibold">Livello </label>
           <input value={livello} disabled className="w-full border px-2 py-1 rounded shadow-sm" />
         </div>
       </div>
@@ -186,16 +186,16 @@ export default function SchedaPaginaUno() {
         <button onClick={salvaDatiGenerali} className="bg-green-600 text-white px-4 py-2 rounded">Conferma Modifiche</button>
       )}
 
-      <hr className="my-4 border-gray-400" />
+      <hr className="my-6 border-gray-400" />
 
-      <div className="flex flex-col gap-4">
-        <Bar tipo="hp" attuale={hp} massimo={hpMax} setAttuale={(val) => { setHp(val); salvaBar('hp', val); }} setMassimo={(val) => { setHpMax(val); salvaBar('hpMax', val); }} />
-        <Bar tipo="focus" attuale={focus} massimo={focusMax} setAttuale={(val) => { setFocus(val); salvaBar('focus', val); }} setMassimo={(val) => { setFocusMax(val); salvaBar('focusMax', val); }} />
-        <Bar tipo="exp" attuale={exp} massimo={expMax} setAttuale={(val) => { setExp(val); salvaBar('exp', val); }} setMassimo={(val) => { setExpMax(val); salvaBar('expMax', val); }} />
-        <Bar tipo="karma" attuale={karma} massimo={karmaMax} setAttuale={(val) => { setKarma(val); salvaBar('karma', val); }} setMassimo={(val) => { setKarmaMax(val); salvaBar('karmaMax', val); }} />
+      <div className="flex flex-col gap-6">
+        <Bar tipo="hp" attuale={hp} massimo={hpMax} setAttuale={setHp} setMassimo={setHpMax} salvaBar={salvaBar} />
+        <Bar tipo="focus" attuale={focus} massimo={focusMax} setAttuale={setFocus} setMassimo={setFocusMax} salvaBar={salvaBar} />
+        <Bar tipo="exp" attuale={exp} massimo={expMax} setAttuale={setExp} setMassimo={setExpMax} salvaBar={salvaBar} />
+        <Bar tipo="karma" attuale={karma} massimo={karmaMax} setAttuale={setKarma} setMassimo={setKarmaMax} salvaBar={salvaBar} />
       </div>
 
-      <hr className="my-4 border-gray-400" />
+      <hr className="my-6 border-gray-400" />
 
       {!confirmed && statPoints > 0 && (
         <div className="text-center text-sm font-semibold text-green-700">
@@ -210,8 +210,8 @@ export default function SchedaPaginaUno() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {["forza","intelligenza","destrezza","costituzione","saggezza","carisma","velocita"].map((key) => (
-          <div key={key} className="border rounded-xl p-3 shadow">
+        {["forza", "intelligenza", "destrezza", "costituzione", "saggezza", "carisma", "velocita"].map((key) => (
+          <div key={key} className="border rounded-xl p-4 shadow bg-white">
             <p className="font-bold capitalize mb-2">{key}: {tempStats[key as keyof Stats]}</p>
             <div className="flex items-center gap-2">
               <button disabled={confirmed} onClick={() => modificaStat(key as keyof Stats, -1)} className="text-red-600 text-xl">➖</button>
@@ -223,13 +223,13 @@ export default function SchedaPaginaUno() {
       </div>
 
       {!confirmed && (
-        <div className="mt-4 text-center">
+        <div className="mt-6 text-center">
           <button onClick={salvaTutto} className="px-4 py-2 bg-black text-white rounded-xl hover:opacity-90">Conferma Statistiche</button>
         </div>
       )}
 
       {infoConfermate && (
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-10">
           <Link href="/scheda/paginaDue">
             <div className="px-6 py-2 bg-blue-700 text-white rounded-xl shadow-lg hover:bg-blue-800 transition cursor-pointer text-center">
               ➡️ Vai alla Pagina 2

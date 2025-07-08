@@ -26,6 +26,7 @@ export default function SchedaPaginaDue() {
 
   useEffect(() => {
     if (!uid || caricato) return;
+
     const loadData = async () => {
       try {
         const ref = doc(db, "schede", uid);
@@ -43,6 +44,7 @@ export default function SchedaPaginaDue() {
         console.error("Errore caricamento dati:", error);
       }
     };
+
     loadData();
   }, [uid, caricato]);
 
@@ -83,7 +85,7 @@ export default function SchedaPaginaDue() {
     setState((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // 🔥 Componente Sezione
+  // 🌟 COMPONENTE SEZIONE
   const Sezione = ({
     titolo,
     dati,
@@ -94,39 +96,48 @@ export default function SchedaPaginaDue() {
     setDati: React.Dispatch<React.SetStateAction<Riga[]>>;
   }) => (
     <div className="mb-10">
-      <h2 className="text-2xl font-bold mb-4 border-b-2 pb-2 border-gray-400">{titolo}</h2>
+      <h2 className="text-2xl font-bold mb-6 border-b-2 pb-2 border-gray-400">{titolo}</h2>
+
       {dati.map((riga, index) => (
-        <div key={index} className="mb-8 p-6 border rounded-2xl shadow bg-white space-y-4">
-          <div className="flex flex-col space-y-1">
-            <label className="text-base font-semibold text-gray-800">Titolazzone </label>
+        <div
+          key={index}
+          className="mb-8 p-6 border rounded-3xl shadow-lg bg-white space-y-4 transition-all hover:shadow-2xl"
+        >
+          <div className="space-y-2">
+            <label className="block text-lg font-semibold text-gray-800">✨ Titolo </label>
             <input
               type="text"
-              placeholder="Es. Accanimento Aureo"
+              placeholder="Es. Furia del Drago"
               value={riga.titolo}
               onChange={(e) => aggiornaValore(setDati, index, "titolo", e.target.value)}
-              className="w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring focus:border-blue-400 text-base bg-gray-50"
+              className="w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-50 text-base"
             />
           </div>
-          <div className="flex flex-col space-y-1">
-            <label className="text-base font-semibold text-gray-800">Descrizione  </label>
-            <textarea
-              placeholder="Scrivi qui la descrizione completa..."
-              value={riga.descrizione}
-              onChange={(e) => aggiornaValore(setDati, index, "descrizione", e.target.value)}
-              className="w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring focus:border-blue-400 text-base bg-gray-50"
-              style={{ height: "10rem", resize: "none" }}
-            />
+
+          <div className="space-y-2">
+            <label className="block text-lg font-semibold text-gray-800">🪶 Descrizione Dettagliata</label>
+            <div className="relative">
+              <textarea
+                placeholder="Scrivi qui la descrizione completa..."
+                value={riga.descrizione}
+                onChange={(e) => aggiornaValore(setDati, index, "descrizione", e.target.value)}
+                className="w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 text-base bg-white"
+                style={{ height: "12rem", resize: "none" }}
+              />
+            </div>
           </div>
+
           <div className="flex justify-end">
             <button
               onClick={() => eliminaRiga(setDati, index)}
               className="mt-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
             >
-            ➖ Rimuovi
+              ➖ Rimuovi
             </button>
           </div>
         </div>
       ))}
+
       <button
         onClick={() => aggiungiRiga(setDati)}
         className="mt-2 px-4 py-2 border rounded-xl text-sm bg-gray-100 hover:bg-gray-200 transition"
@@ -137,7 +148,7 @@ export default function SchedaPaginaDue() {
   );
 
   return (
-    <div className="p-6 space-y-10 max-w-5xl mx-auto bg-gray-50 min-h-screen">
+    <div className="p-6 space-y-12 max-w-5xl mx-auto bg-gray-50 min-h-screen">
       <div className="flex justify-start mb-6">
         <Link href="/scheda">
           <button className="px-4 py-2 bg-gray-700 text-white rounded-xl hover:bg-gray-800 transition">
